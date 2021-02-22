@@ -17,6 +17,7 @@ const purchasesNames = [
   'unicorn',
   'wine-glass'
 ];
+let remainingVotes = 25;
 
 const leftImg = document.getElementById("img1");
 const centerImg = document.getElementById("img2");
@@ -56,34 +57,78 @@ function render() {
   rightImg.title = Purchases.all[rightIndex].name;
   rightImg.alt = Purchases.all[rightIndex].name;
 
-}
-sectionImg.addEventListener('click', handleClick);
+  Purchases.all[leftIndex].views++;
+  Purchases.all[centerIndex].views++;
+  Purchases.all[rightIndex].views++;
 
-function handleClick(event) {
-  console.log('Target', event.target.id);
-  if (event.target.id !== 'sec1') {
-    for (let i = 0; i < Purchases.all.length; i++) {
-      if (Purchases.all[i].name === event.target.title) {
-        Purchases.all[i].votes++;
+}
+
+sectionImg.addEventListener('click', clickHandler);
+
+function clickHandler(event) {
+  // console.log('Target', event.target.id);
+   remainingVotes -- ;
+
+  if (remainingVotes === 0) {
+    sec1.removeEventListener('click', clickHandler);
+    sectionImg.addEventListener('submit', function (event) {
+
+      const views = event.target.name.views;
+      console.log(views);
+    
+      const votes = event.target.name.views;
+      const result = document.getElementById("res");
+    
+      event.preventDefault();
+    
+    })
+    createChart();
+  } else {
+    if (event.target.id !== 'sec1') {
+      for (let i = 0; i < Purchases.all.length; i++) {
+        if (Purchases.all[i].name === event.target.title) {
+          Purchases.all[i].votes++;
+        }
+
       }
-  
+      render();
+      console.log(Purchases.all);
     }
-    render();
   }
 }
-sectionImg.addEventListener('submit',function(event){
-
-  const views =event.target.name.views;
-  console.log(views);
-  
-  const  votes=event.target.name.views;
-  const result=document.getElementById("res");
-
-  event.preventDefault();
-
-})
+;
 render();
 
+function createChart() {
+  const ctx = document.getElementById('myChart').getContext('2d');
+
+  const PurchaseNames = [];
+  const Votes = [];
+  for (let i = 0; i < Purchases.all.length; i++) {
+    PurchaseNames.push(Purchases.all[i].name);
+    Votes.push(Purchases.all[i].votes);
+  }
+  console.log('Votes', Votes);
+  new Chart(ctx, {
+    type: 'bar',
+
+    data: {
+      labels: PurchaseNames,
+      datasets: [
+        {
+          barPercentage: 0.5,
+          borderWidth: 4,
+          label: ' Votes:',
+          backgroundColor: 'rgb(100, 7, 25)',
+          borderColor: 'rgb(0, 0, 0)',
+          data: Votes,
+        },
+      ],
+    },
+
+    options: {},
+  });
+}render();
 //helper
 function randomNumber(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
