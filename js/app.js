@@ -1,3 +1,4 @@
+
 'use strict';
 
 const purchasesNames = [
@@ -31,9 +32,24 @@ function Purchases(name) {
   this.votes = 0;
   this.views = 0;
   Purchases.all.push(this);
+  localStorage.setItem("sectionImg",JSON.stringify(Purchases.all));
+
 }
 
 Purchases.all = [];
+function retrieve()
+{
+  console.log(Purchases.all);
+  if(localStorage.length >0)
+  {
+    Purchases.all = JSON.parse(localStorage.getItem("sectionImg"));
+    
+    renderPurchases();
+  }
+  
+}
+retrieve();
+
 for (let i = 0; i < purchasesNames.length; i++) {
   new Purchases(purchasesNames[i]);
 
@@ -95,8 +111,12 @@ function clickHandler(event) {
       console.log(Purchases.all);
     }
   }
-}
-;
+  localStorage.setItem("name",name);
+  localStorage.setItem("path",path);
+  localStorage.setItem("votes",votes);
+  localStorage.setItem("views",views);
+
+};
 render();
 
 function createChart() {
@@ -108,6 +128,7 @@ function createChart() {
     PurchaseNames.push(Purchases.all[i].name);
     Votes.push(Purchases.all[i].votes);
   }
+ 
   console.log('Votes', Votes);
   new Chart(ctx, {
     type: 'bar',
